@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs') %>
+    <!-- <link rel="stylesheet" href="/css/product.css"> -->
+    <link rel="stylesheet" href="/css/cart.css">
+    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="/js/filter.js"></script>
+</head>
+
+<body>
+    <%- include('../includes/title.ejs') %>
+    <%- include('../includes/navigation.ejs') %>
+    <h2 class="centered">Search for your required products</h2>
+    
+    <main>
+    <div class="container">
+        <div class="row" id="search">
+            <form id="search-form" action="" method="POST" enctype="multipart/form-data">
+                <div class="form-group col-xs-9">
+                    <input class="form-control" type="text" placeholder="Search" />
+                </div>
+                <div class="form-group col-xs-3">
+                    <button type="submit" class="btn btn-block">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="row" id="filter">
+            <form>
+                <div class="form-group col-sm-3 col-xs-6">
+                    <select data-filter="make" class="filter-make filter form-control">
+                        <option value="">Select Name</option>
+                        <option value="">Show All</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-3 col-xs-6">
+                    <select data-filter="model" class="filter-model filter form-control">
+                        <option value="">Select Owner</option>
+                        <option value="">Show All</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-3 col-xs-6">
+                    <select data-filter="type" class="filter-type filter form-control">
+                        <option value="">Select Category</option>
+                        <option value="">Show All</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="row" id="products">
+            
+        </div>
+    </div>
+</main>
+    <script src="/js/filter.js"></script>
+<%- include('../includes/end.ejs') %>
