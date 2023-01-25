@@ -20,6 +20,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
+
 const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
@@ -91,18 +92,16 @@ app.use((req, res, next) => {
     });
 });
 
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
 app.get('/500', errorController.get500);
-
 app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
-  // res.status(error.httpStatusCode).render(...);
   console.log(error);
-  // res.redirect('/500');
   res.status(500).render('500', {
     pageTitle: 'Error!',
     path: '/500',
@@ -110,8 +109,8 @@ app.use((error, req, res, next) => {
   });
 });
 
-mongoose
-  .connect(MONGODB_URI,{useNewUrlParser: true})
+
+mongoose.connect(MONGODB_URI,{useNewUrlParser: true,useUnifiedTopology: true})
   .then(result => {
     app.listen(3000);
     console.log('Database connected successfully!!')

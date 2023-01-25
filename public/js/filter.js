@@ -74,55 +74,9 @@ for (var i = 0; i < data.length; i++) {
 	//create product cards
 	products += "<div class='col-sm-4 product' data-make='" + make + "' data-model='" + model + "' data-type='" + type + "' data-price='" + rawPrice + "'><div class='product-inner text-center'><img style=`height:100px;width:100px;` src='" + image + "'><br />Title: " + make + "<br />Owner: " + model + "<br />Category: " + type + "<br />Price: " + price + "</div></div>";
 	
-	//create dropdown of makes
-	if (makes.indexOf("<option value='" + make + "'>" + make + "</option>") == -1) {
-		makes += "<option value='" + make + "'>" + make + "</option>";
-	}
-	
-	//create dropdown of models
-	if (models.indexOf("<option value='" + model+"'>" + model + "</option>") == -1) {
-		models += "<option value='" + model + "'>" + model + "</option>";
-	}
-	
-	//create dropdown of types
-	if (types.indexOf("<option value='" + type + "'>" + type + "</option>") == -1) {
-		types += "<option value='" + type + "'>" + type + "</option>";
-	}
 }
 
 $("#products").html(products);
-$(".filter-make").append(makes);
-$(".filter-model").append(models);
-$(".filter-type").append(types);
-
-var filtersObject = {};
-
-//on filter change
-$(".filter").on("change",function() {
-	var filterName = $(this).data("filter"),
-		filterVal = $(this).val();
-	
-	if (filterVal == "") {
-		delete filtersObject[filterName];
-	} else {
-		filtersObject[filterName] = filterVal;
-	}
-	
-	var filters = "";
-	
-	for (var key in filtersObject) {
-	  	if (filtersObject.hasOwnProperty(key)) {
-			filters += "[data-"+key+"='"+filtersObject[key]+"']";
-	 	}
-	}
-	
-	if (filters == "") {
-		$(".product").show();
-	} else {
-		$(".product").hide();
-		$(".product").hide().filter(filters).show();
-	}
-});
 
 //on search form submit
 $("#search-form").submit(function(e) {

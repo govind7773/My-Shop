@@ -8,31 +8,16 @@ const Order = require('../models/order');
 const { ObjectId } = require('mongodb');
 const stripe = require('stripe')('sk_test_51MNih7SHXg929BdpthyoBQ9Dhizmwygei8dU78bPq30Q1x5KruFi7Yvnv42aXFDTmonnfI9HdQNXEsMuZlnCzKQx00x8jmPRLO');
 
-const ITEMS_PER_PAGE = 4;
-
 exports.getProducts = (req, res, next) => {
-  const page = +req.query.page || 1;
-  let totalItems;
+
 
   Product.find()
-    .countDocuments()
-    .then(numProducts => {
-      totalItems = numProducts;
-      return Product.find()
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE);
-    })
     .then(products => {
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'Products',
         path: '/products',
-        currentPage: page,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+       
       });
     })
     .catch(err => {
@@ -60,49 +45,23 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  const page = +req.query.page || 1;
-  let totalItems;
 
-  Product.find()
-    .countDocuments()
-    .then(numProducts => {
-      totalItems = numProducts;
-      return Product.find()
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE);
-    })
-    .then(products => {
-      res.render('shop/index', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/',
-        currentPage: page,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
-      });
-    })
-    .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
+  res.render('shop/index', {
+    pageTitle: 'Shop',
+    path: '/',
+  });
+
 };
 
 exports.postIndex = (req,res,next)=>{
-  const title = req.body.title;
+  // const title = req.body.title;
   
 }
 
 exports.getCart = (req, res, next) => {
-  req.user
-    .populate('cart.items.productId')
-    // .execPopulate()
+  req.user.populate('cart.items.productId')
     .then(user => {
       const products = user.cart.items;
-      // console.log(products);
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -120,6 +79,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then(product => {
+      // calling the user schema addToCart function
       return req.user.addToCart(product);
     })
     .then(result => {
@@ -152,7 +112,6 @@ exports.getCheckout = (req,res,next)=>{
   let total=0;
   req.user
     .populate('cart.items.productId')
-    // .execPopulate()
     .then(user => {
       products = user.cart.items;
       total=0;
@@ -180,7 +139,6 @@ exports.getCheckout = (req,res,next)=>{
       })
     })
     .then(session=>{
-      // console.log(products);
       res.render('shop/checkout', {
         path: '/checkout',
         pageTitle: 'checkout',
@@ -199,7 +157,6 @@ exports.getCheckout = (req,res,next)=>{
 exports.getCheckoutSuccess = (req, res, next) => {
   req.user
     .populate('cart.items.productId')
-    // .execPopulate()
     .then(user => {
       const products = user.cart.items.map(i => {
         return { quantity: i.quantity, product: { ...i.productId._doc } };
@@ -284,22 +241,9 @@ exports.getInvoice = (req, res, next) => {
       });
       pdfDoc.text('---');
       pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+      pdfDoc.fontSize(14).text('user ID - '+req.user._id);
 
       pdfDoc.end();
-      // fs.readFile(invoicePath, (err, data) => {
-      //   if (err) {
-      //     return next(err);
-      //   }
-      //   res.setHeader('Content-Type', 'application/pdf');
-      //   res.setHeader(
-      //     'Content-Disposition',
-      //     'inline; filename="' + invoiceName + '"'
-      //   );
-      //   res.send(data);
-      // });
-      // const file = fs.createReadStream(invoicePath);
-
-      // file.pipe(res);
     })
     .catch(err => next(err));
 };
